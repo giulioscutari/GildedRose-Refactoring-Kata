@@ -2,9 +2,26 @@
 
 class GildedRose(object):
 
+    quality_changes_dict = {
+        "Aged Brie": 1,
+        "Backstage passes to a TAFKAL80ETC concert": 0,
+    }
     def __init__(self, items):
-        self.items = items
 
+        self.item_handlers = []
+        for i in items:
+            if i.name == "Aged Brie":
+                self.item_handlers.append(
+                    ItemHandler(item, 1)
+                )
+
+    def update_item_quality(self, item):
+        """Update single object quality."""
+        if item.quality == 50 or "Sulfuras, Hand of Ragnaros" in item.name or item.quality == 0:
+            return
+        if item.name in quality_changes_dict:
+            item.quality += self.quality_changes_dict[item.name]
+    
     def update_quality(self):
         for item in self.items:
             if item.name != "Aged Brie" and item.name != "Backstage passes to a TAFKAL80ETC concert":
@@ -44,3 +61,18 @@ class Item:
 
     def __repr__(self):
         return "%s, %s, %s" % (self.name, self.sell_in, self.quality)
+
+
+class ItemHandler:
+    
+    def __init__(self, item; quality_change):
+        self.item = item
+        self.quality_change = quality_change
+
+    def update_item(self):
+        self.item.quality += self.quality_change
+        self.sell_in -= 1
+        
+
+class BackStagePassHandler(ItemHandler):
+    pass
